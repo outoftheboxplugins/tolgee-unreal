@@ -18,6 +18,7 @@ void FTolgeeTextSource::LoadLocalizedResources(
 )
 {
 	InOutLocalizedResource.AddEntry(TEXT("NamespaceTest"), TEXT("KeyTest"), TEXT("English Test"), TEXT("InLocalizedString"), 0);
+	InOutLocalizedResource.AddEntry(TEXT("NamespaceTest"), TEXT("TimeFormat"), TEXT("{0}|plural(one=time, other=times)"), TEXT("{0}|plural(one=one, other=other)"), 0);
 	/*auto GetLocalizedStringForPolyglotData = [&InPolyglotTextData](TArrayView<const FString> InCulturesToCheck, FString& OutLocalizedString, int32* OutLocalizedPriority = nullptr) -> bool
 	{
 		for (int32 CultureIndex = 0; CultureIndex < InCulturesToCheck.Num(); ++CultureIndex)

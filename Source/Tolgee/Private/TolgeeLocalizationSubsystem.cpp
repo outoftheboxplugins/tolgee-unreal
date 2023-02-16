@@ -13,7 +13,10 @@ void UTolgeeLocalizationSubsystem::Initialize(FSubsystemCollectionBase& Collecti
 		[](const UWorld::FActorsInitializedParams& Params)
 		{
 			FText TogleeTest = NSLOCTEXT("NamespaceTest", "KeyTest", "English Test");
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *TogleeTest.ToString())
+			UE_LOG(LogTemp, Warning, TEXT("Simple Example: %s"), *TogleeTest.ToString());
+
+			FText TogleeTest2 = FText::Format(NSLOCTEXT("NamespaceTest", "TimeFormat", "{0}|plural(one=time, other=times)"), 2);
+			UE_LOG(LogTemp, Warning, TEXT("Complex Example: %s"), *TogleeTest2.ToString());
 		}
 	);
 }
