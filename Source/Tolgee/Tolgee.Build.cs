@@ -9,7 +9,11 @@ public class Tolgee : ModuleRules
         PublicDependencyModuleNames.AddRange(
             new string[]
             {
-                "Core",
+                "Core", 
+                "HTTP",
+                "Json",
+                "JsonUtilities",
+                "DeveloperSettings"
             }
         );
 
