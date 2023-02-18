@@ -1,4 +1,6 @@
-﻿using UnrealBuildTool;
+﻿// Copyright (c) Tolgee. All Rights Reserved.
+
+using UnrealBuildTool;
 
 public class Tolgee : ModuleRules
 {

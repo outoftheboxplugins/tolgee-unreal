@@ -1,4 +1,6 @@
-﻿#include "TolgeeEditor.h"
+﻿// Copyright (c) Tolgee. All Rights Reserved.
+
+#include "TolgeeEditor.h"
 
 #define LOCTEXT_NAMESPACE "FTolgeeEditorModule"
 

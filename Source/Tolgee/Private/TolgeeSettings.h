@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿// Copyright (c) Tolgee. All Rights Reserved.
+
+#pragma once
 
 #include "Engine/DeveloperSettings.h"
 

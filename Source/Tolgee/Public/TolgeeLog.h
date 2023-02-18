@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿// Copyright (c) Tolgee. All Rights Reserved.
+
+#pragma once
 
 #include <Logging/LogMacros.h>
 

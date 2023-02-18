@@ -1,4 +1,6 @@
-﻿#include "Tolgee.h"
+﻿// Copyright (c) Tolgee. All Rights Reserved.
+
+#include "Tolgee.h"
 
 #define LOCTEXT_NAMESPACE "FTolgeeModule"
 

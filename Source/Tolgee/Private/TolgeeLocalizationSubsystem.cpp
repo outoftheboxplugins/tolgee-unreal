@@ -1,4 +1,6 @@
-﻿#include "TolgeeLocalizationSubsystem.h"
+﻿// Copyright (c) Tolgee. All Rights Reserved.
+
+#include "TolgeeLocalizationSubsystem.h"
 
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
