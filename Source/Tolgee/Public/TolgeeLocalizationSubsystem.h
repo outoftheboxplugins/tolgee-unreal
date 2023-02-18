@@ -3,38 +3,14 @@
 #pragma once
 
 #include "Interfaces/IHttpRequest.h"
-#include "Subsystems/EngineSubsystem.h"
+#include "Subsystems/GameInstanceSubsystem.h"
 
 #include "TolgeeLocalizationSubsystem.generated.h"
 
 class FTolgeeTextSource;
 
 USTRUCT()
-struct FTolgeeLanguage
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	int64 Id;
-
-	UPROPERTY()
-	FString Name;
-
-	UPROPERTY()
-	FString Tag;
-
-	UPROPERTY()
-	FString OriginalName;
-
-	UPROPERTY()
-	FString FlagEmoji;
-
-	UPROPERTY()
-	bool Base;
-};
-
-USTRUCT()
-struct FTolgeeTranslationLanguage
+struct FTolgeeTranslation
 {
 	GENERATED_BODY()
 
@@ -43,18 +19,6 @@ struct FTolgeeTranslationLanguage
 
 	UPROPERTY()
 	FString Text;
-};
-
-USTRUCT()
-struct FTolgeeTranslation
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	FTolgeeTranslationLanguage En;
-
-	UPROPERTY()
-	FTolgeeTranslationLanguage De;
 };
 
 USTRUCT()
@@ -73,48 +37,34 @@ struct FTolgeeKey
 
 	UPROPERTY()
 	FString KeyNamespace;
-
-	UPROPERTY()
-	FTolgeeTranslation Translations;
-};
-
-USTRUCT()
-struct FTolgeeEmbededData
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	TArray<FTolgeeKey> Keys;
-};
-
-USTRUCT()
-struct FTolgeeTranslationData
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	FString NextCursor;
-
-	UPROPERTY()
-	TArray<FTolgeeLanguage> SelectedLanguages;
-
-	UPROPERTY()
-	FTolgeeEmbededData _Embedded;
 };
 
 /**
  *
  */
 UCLASS()
-class TOLGEE_API UTolgeeLocalizationSubsystem : public UEngineSubsystem
+class TOLGEE_API UTolgeeLocalizationSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
+	void ManualFetch();
+
 private:
+	void GetLocalizedResources(
+		const ELocalizationLoadFlags InLoadFlags, TArrayView<const FString> InPrioritizedCultures, FTextLocalizationResource& InOutNativeResource, FTextLocalizationResource& InOutLocalizedResource
+	) const;
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	void FetchTranslation();
 	void OnTranslationFetched(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	void OnTranslationReady();
+
+	// TODO: Temp work delete after better testing is implemented.
+	void TestPrint();
+
+	FTimerHandle AutoFetchTimerHandle;
 
 	TSharedPtr<FTolgeeTextSource> TextSource;
+
+	TArray<TSharedPtr<FJsonValue>> TranslatedKeys;
 };

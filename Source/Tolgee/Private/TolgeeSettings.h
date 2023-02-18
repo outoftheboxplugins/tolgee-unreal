@@ -17,4 +17,10 @@ class UTolgeeSettings : public UDeveloperSettings
 public:
 	UPROPERTY(Config, EditAnywhere)
 	FString ApiKey = TEXT("tgpak_ge4dimc7mm2xenlbmz3gmzlrovrxandqofzwgmlhnrtgszdnmm");
+
+	UPROPERTY(Config, EditAnywhere)
+	FString Project;
+
+	UPROPERTY(Config, EditAnywhere)
+	float UpdateInterval = 60.0f;
 };
