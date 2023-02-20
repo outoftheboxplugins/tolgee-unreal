@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/EngineTypes.h"
+#include "Engine/GameInstance.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Subsystems/EngineSubsystem.h"
 
