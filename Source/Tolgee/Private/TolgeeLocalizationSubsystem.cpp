@@ -17,6 +17,8 @@ void UTolgeeLocalizationSubsystem::ManualFetch()
 	FetchTranslation();
 }
 
+// TODO: Look at UGatherTextFrom to see how to find all localized stuff
+
 void UTolgeeLocalizationSubsystem::GetLocalizedResources(
 	const ELocalizationLoadFlags InLoadFlags, TArrayView<const FString> InPrioritizedCultures, FTextLocalizationResource& InOutNativeResource, FTextLocalizationResource& InOutLocalizedResource
 ) const
@@ -30,21 +32,20 @@ void UTolgeeLocalizationSubsystem::GetLocalizedResources(
 		FTolgeeKey Key;
 		FJsonObjectConverter::JsonObjectToUStruct(TranslatedKeyObject, &Key);
 
-		consteTSharedRef<FJsonObject> Translations = TranslatedKeyObject->GetObjectField("translations").ToSharedRef();
-
-		FTolgeeTranslation DefaultLanguage;
-		FJsonObjectConverter::JsonObjectToUStruct(Translations->GetObjectField("en").ToSharedRef(), &DefaultLanguage);
-
 		// TODO: could not get german, we should check what payload we get.
+		const TSharedRef<FJsonObject> Translations = TranslatedKeyObject->GetObjectField("translations").ToSharedRef();
 		FTolgeeTranslation CurrentLanguage;
-		FJsonObjectConverter::JsonObjectToUStruct(Translations->GetObjectField("translations")->GetObjectField("de").ToSharedRef(), &DefaultLanguage);
+		FJsonObjectConverter::JsonObjectToUStruct(Translations->GetObjectField("de").ToSharedRef(), &CurrentLanguage);
 
-		FTextKey InNamespace = Key.KeyNamespace;
-		FTextKey InKey = Key.KeyName;
-		FString InSourceString = DefaultLanguage.Text;
-		FString InLocalizedString = CurrentLanguage.Text;
+		const FTextKey InNamespace = Key.KeyNamespace;
+		const FTextKey InKey = Key.KeyName;
+		// TODO: find some better way to get this from the tags.
+		const uint32 KeyHash = static_cast<uint32>(FCString::Atoi64(*Key.KeyTags[0].Name));
+		const FString InLocalizedString = CurrentLanguage.Text;
 
-		InOutLocalizedResource.AddEntry(InNamespace, InKey, InSourceString, InLocalizedString, 0);
+		const uint32 testHash = FTextLocalizationResource::HashString(TEXT("{0}|plural(one=time, other=times)"));
+
+		InOutLocalizedResource.AddEntry(InNamespace, InKey, KeyHash, InLocalizedString, 0);
 	}
 }
 
@@ -54,16 +55,22 @@ void UTolgeeLocalizationSubsystem::Initialize(FSubsystemCollectionBase& Collecti
 
 	Super::Initialize(Collection);
 
-	GetGameInstance()->GetTimerManager().SetTimer(AutoFetchTimerHandle, this, &ThisClass::FetchTranslation, GetDefault<UTolgeeSettings>()->UpdateInterval, true, 0.1f);
+	FWorldDelegates::OnStartGameInstance.AddUObject(this, &ThisClass::OnGameInstanceStart);
 
 	TextSource = MakeShared<FTolgeeTextSource>();
 	TextSource->GetLocalizedResources.BindUObject(this, &ThisClass::GetLocalizedResources);
 	FTextLocalizationManager::Get().RegisterTextSource(TextSource.ToSharedRef());
+}
+
+void UTolgeeLocalizationSubsystem::OnGameInstanceStart(UGameInstance* GameInstance)
+{
+	GameInstance->GetTimerManager().SetTimer(AutoFetchTimerHandle, this, &ThisClass::FetchTranslation, GetDefault<UTolgeeSettings>()->UpdateInterval, true, 0.1f);
 
 	FetchTranslation();
 
 	TestPrint();
 }
+
 void UTolgeeLocalizationSubsystem::FetchTranslation()
 {
 	UE_LOG(LogTolgee, Verbose, TEXT("UTolgeeLocalizationSubsystem::FetchTranslation"));
@@ -127,4 +134,7 @@ void UTolgeeLocalizationSubsystem::TestPrint()
 
 	FText TogleeTest2 = FText::Format(NSLOCTEXT("NamespaceTest", "TimeFormat", "{0}|plural(one=time, other=times)"), 2);
 	UE_LOG(LogTemp, Warning, TEXT("Complex Example: %s"), *TogleeTest2.ToString());
+
+	FText TolgeeTest3 = NSLOCTEXT("NamespaceTest", "RequestTest", "before request");
+	UE_LOG(LogTemp, Warning, TEXT("Request Test: %s"), *TolgeeTest3.ToString());
 }

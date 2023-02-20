@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Interfaces/IHttpRequest.h"
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystems/EngineSubsystem.h"
 
 #include "TolgeeLocalizationSubsystem.generated.h"
 
@@ -22,6 +22,18 @@ struct FTolgeeTranslation
 };
 
 USTRUCT()
+struct FTolgeeKeyTag
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int64 Id;
+
+	UPROPERTY()
+	FString Name;
+};
+
+USTRUCT()
 struct FTolgeeKey
 {
 	GENERATED_BODY()
@@ -37,13 +49,16 @@ struct FTolgeeKey
 
 	UPROPERTY()
 	FString KeyNamespace;
+
+	UPROPERTY()
+	TArray<FTolgeeKeyTag> KeyTags;
 };
 
 /**
  *
  */
 UCLASS()
-class TOLGEE_API UTolgeeLocalizationSubsystem : public UGameInstanceSubsystem
+class TOLGEE_API UTolgeeLocalizationSubsystem : public UEngineSubsystem
 {
 	GENERATED_BODY()
 
@@ -54,6 +69,8 @@ private:
 		const ELocalizationLoadFlags InLoadFlags, TArrayView<const FString> InPrioritizedCultures, FTextLocalizationResource& InOutNativeResource, FTextLocalizationResource& InOutLocalizedResource
 	) const;
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
+	void OnGameInstanceStart(UGameInstance* GameInstance);
 
 	void FetchTranslation();
 	void OnTranslationFetched(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
